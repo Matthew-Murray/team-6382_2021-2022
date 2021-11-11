@@ -30,10 +30,11 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+//import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
@@ -42,7 +43,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 // This OPMode contains controls and setup for the robot's claw and claw arm.
 //@Disabled
-@TeleOp(name = "CLAWTRON 3000", group = "Linear OPMode")
+@TeleOp(name = "CLAWTRON 3001", group = "Linear OPMode")
 public class ServoClaw extends LinearOpMode {
 
     // Define class members
@@ -59,7 +60,7 @@ public class ServoClaw extends LinearOpMode {
     HardwarePushbot robot = new HardwarePushbot();
 
     final double claw_speed = 0.02; // sets rate to move servo
-    double clawOffset = 0; // Servo mid position
+    double clawOffset = 0.5; // Servo mid position
 
     @Override
     public void runOpMode() {
@@ -69,6 +70,7 @@ public class ServoClaw extends LinearOpMode {
         spinner = hardwareMap.get(DcMotor.class, "base_spinner");
         clawBase = hardwareMap.get(DcMotor.class, "claw_base_controller");
         clawBendy = hardwareMap.get(DcMotor.class, "claw_bendy_controller");
+        robot.init(hardwareMap);
 
         // Wait until we're fully initialized
         waitForStart();
@@ -87,16 +89,19 @@ public class ServoClaw extends LinearOpMode {
             clawBase.setPower(clawBaseController);
             clawBendy.setPower(clawBendyController);
 
+
             // Use gamepad left & right Bumpers to open and close the claw
-            if (gamepad1.right_bumper)
+            if (gamepad1.right_bumper) {
                 clawOffset += claw_speed;
-            else if (gamepad1.left_bumper)
+            }
+            else if (gamepad1.left_bumper) {
                 clawOffset -= claw_speed;
+            }
 
             // Move both servos to new position.  Assume servos are mirror image of each other.
             clawOffset = Range.clip(clawOffset, -0.5, 0.5);
-            robot.leftClaw.setPosition(robot.MID_SERVO + clawOffset);
-            robot.rightClaw.setPosition(robot.MID_SERVO - clawOffset);
+            robot.leftClaw.setPosition(0 + clawOffset);
+            robot.rightClaw.setPosition(0 - clawOffset);
 
 
 
@@ -106,7 +111,7 @@ public class ServoClaw extends LinearOpMode {
 
 
 
-        sleep(50);
+        //sleep(50);
         }
 
 
