@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
@@ -66,11 +67,15 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
         double drive;
         double turn;
         double max;
+        double spinnerController;
+        DcMotor spinner;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
+        spinner = hardwareMap.get(DcMotor.class, "left_drive");
+
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Say", "ARE YOU READY TO RUMBLE???");    //
@@ -85,8 +90,11 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forwards, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
+            // Also control the base claw spinner.
             drive = -gamepad1.left_stick_y;
             turn  =  gamepad1.right_stick_x;
+            spinnerController = gamepad1.right_stick_y;
+
 
             // Combine drive and turn for blended motion.
             left  = drive + turn;
@@ -98,11 +106,13 @@ public class PushbotTeleopPOV_Linear extends LinearOpMode {
             {
                 left /= max;
                 right /= max;
+                spinnerController /= max;
             }
 
             // Output the safe vales to the motor drives.
             robot.leftDrive.setPower(left);
             robot.rightDrive.setPower(right);
+            spinner.setPower(spinnerController);
 
             // Use gamepad left & right Bumpers to open and close the claw
             if (gamepad1.right_bumper)
